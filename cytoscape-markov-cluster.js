@@ -1,18 +1,61 @@
 ;(function(){ 'use strict';
 
+  var defaults = {
+    expandFactor: 2,
+    inflateFactor: 2,
+    multFactor: 1,
+    maxIterations: 10
+  };
+
+  var setOptions = function( opts, options ) {
+    for (var i in defaults) { opts[i] = defaults[i]; }
+    for (var i in options)  { opts[i] = options[i];  }
+  };
+
+  var hasConverged = function( M, iterations ) {
+
+  };
+
+  var markovCluster = function( options ) {
+    var eles = this;
+    var cy = this.cy();
+
+    // Set parameters of algorithm:
+    setOptions( opts, options );
+
+    // Begin Markov cluster algorithm
+    var clusters = [];
+
+    // Step 1: M = addDiagonal( M, multFactor );
+
+    // Step 2: M = normalize( M );
+
+    var isStillMoving = true;
+    var iterations = 0;
+
+    while ( isStillMoving && iterations < opts.maxIterations ) {
+
+      isStillMoving = false;
+
+      // Step 3: M = inflate( M, inflateFactor );
+
+      // Step 4: M = expand ( M, expandFactor );
+
+      isStillMoving = hasConverged( M, iterations );
+
+      iterations++;
+    }
+
+    return clusters;
+  };
+
   // registers the extension on a cytoscape lib ref
   var register = function( cytoscape ){
 
     if( !cytoscape ){ return; } // can't register if cytoscape unspecified
 
-    cytoscape( 'collection', 'markovCluster', function(){
-      var eles = this;
-      var cy = this.cy();
-
-      // your extension impl...
-
-      return this; // chainability
-    } );
+    // main entry point
+    cytoscape( 'collection', 'markovCluster', markovCluster );
 
   };
 

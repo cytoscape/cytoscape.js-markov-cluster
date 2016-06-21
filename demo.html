@@ -86,8 +86,18 @@
 					},
 				});
 
-				// demo your collection ext
-				cy.elements().markov-cluster( /* args... */ );
+                // Input parameters to Markov cluster algorithm
+                var options = {
+
+                };
+
+                // Run Markov cluster on graph
+				cy.elements().markovCluster( options );
+
+                // Assign random colors to each cluster!
+                for (var c = 0; c < options.k; c++) {
+                    clusters[c].style( 'background-color', '#' + Math.floor(Math.random()*16777215).toString(16) );
+                }
 
 			});
 		</script>
