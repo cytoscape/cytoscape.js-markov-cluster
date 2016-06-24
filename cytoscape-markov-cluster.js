@@ -22,10 +22,11 @@
     for ( var i = 0; i < n; i++ ) {
       var row = '';
       for ( var j = 0; j < n; j++ ) {
-        row += Math.round(M[i*n+j]*100)/100 + ' ';
+        row += Math.round(M[i*n+j]*1000)/1000 + ' ';
       }
       console.log(row);
     }
+    console.log('');
   };
 
   var getSimilarity = function( edge, attributes ) {
@@ -56,7 +57,8 @@
   };
 
   // TODO: blocking matrix multiplication?
-  var mmult = function( A, B, C, n ) {
+  var mmult = function( A, B, n ) {
+    var C = new Array(n*n);
     var i, j, k;
     for (i=0; i<n; i++) {
       for (j=0; j<n; j++)
@@ -68,30 +70,34 @@
         }
       }
     }
+    return C;
   };
 
   var expand = function( M, n, expandFactor /** power **/ ) {
-    var M_p = new Array( n * n );
+    var _M = M.slice();
+
     for (var p = 1; p < expandFactor; p++) {
-      mmult( M, M, M_p, n );
+      M = mmult( M, _M, n );
     }
-    return M_p;
+    return M;
   };
 
   var inflate = function( M, n, inflateFactor /** r **/ ) {
+    var _M = new Array( n * n );
 
     // M(i,j) ^ inflatePower
     for (var i=0; i<n*n; i++) {
-      M[i] = Math.pow(M[i],inflateFactor);
+      _M[i] = M[i]*M[i];//Math.pow(M[i],inflateFactor);
     }
 
-    normalize( M, n );
+    normalize( _M, n );
 
-    return M;
+    return _M;
   };
 
   var hasConverged = function( M, iterations ) {
 
+    return false;
   };
 
   var markovCluster = function( options ) {
@@ -145,10 +151,13 @@
       // Step 4:
       M = inflate( M, n, opts.inflateFactor );
 
-      printMatrix( M );
-      debugger;
+      //printMatrix( M );
+      //debugger;
 
-      isStillMoving = hasConverged( M, iterations );
+      // Step 5: check to see if ~steady state has been reached
+      if ( ! hasConverged( M, iterations ) ) {
+        isStillMoving = true;
+      }
 
       iterations++;
     }
