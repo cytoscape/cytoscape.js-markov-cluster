@@ -22,7 +22,7 @@
     for ( var i = 0; i < n; i++ ) {
       var row = '';
       for ( var j = 0; j < n; j++ ) {
-        row += M[i*n+j] + ' ';
+        row += Math.round(M[i*n+j]*100)/100 + ' ';
       }
       console.log(row);
     }
@@ -39,6 +39,19 @@
   var addLoops = function( M, n, val ) {
     for (var i = 0; i < n; i++) {
       M[i * n + i] = val;
+    }
+  };
+
+  var normalize = function( M, n ) {
+    var sum;
+    for (var col = 0; col < n; col++) {
+      sum = 0;
+      for (var row = 0; row < n; row++) {
+        sum += M[row * n + col];
+      }
+      for (var row = 0; row < n; row++) {
+        M[row * n + col] = M[row * n + col] / sum;
+      }
     }
   };
 
@@ -74,8 +87,6 @@
       var j = id2position[ edge.target().id() ];
       M[i * n + j] += getSimilarity( edge, opts.attributes ); // G should be symmetric and undirected
     }
-    //printMatrix( M );
-    //debugger;
 
     // Begin Markov cluster algorithm
     var clusters = [];
@@ -84,6 +95,9 @@
     addLoops( M, n, opts.multFactor );
 
     // Step 2: M = normalize( M );
+    normalize( M, n );
+    printMatrix( M );
+    debugger;
 
     var isStillMoving = true;
     var iterations = 0;
