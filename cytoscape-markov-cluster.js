@@ -36,6 +36,12 @@
     return total;
   };
 
+  var addLoops = function( M, n, val ) {
+    for (var i = 0; i < n; i++) {
+      M[i * n + i] = val;
+    }
+  };
+
   var hasConverged = function( M, iterations ) {
 
   };
@@ -74,7 +80,8 @@
     // Begin Markov cluster algorithm
     var clusters = [];
 
-    // Step 1: M = addDiagonal( M, multFactor );
+    // Step 1: Add self loops to each node, ie. add multFactor to matrix diagonal
+    addLoops( M, n, opts.multFactor );
 
     // Step 2: M = normalize( M );
 
