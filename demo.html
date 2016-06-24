@@ -2,89 +2,97 @@
 
 <html>
 
-	<head>
-		<title>cytoscape-markov-cluster.js demo</title>
+    <head>
+        <title>cytoscape-markov-cluster.js demo</title>
 
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 
-		<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+        <!--<script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>-->
 
-		<!-- for testing with local version of cytoscape.js -->
-		<!--<script src="../cytoscape.js/build/cytoscape.js"></script>-->
+        <!-- for testing with local version of cytoscape.js -->
+        <script src="../cytoscape.js/build/cytoscape.js"></script>
 
-		<script src="cytoscape-markov-cluster.js"></script>
+        <script src="cytoscape-markov-cluster.js"></script>
 
-		<style>
-			body {
-				font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
-				font-size: 14px;
-			}
+        <style>
+            body {
+                font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+                font-size: 14px;
+            }
 
-			#cy {
-				position: absolute;
-				left: 0;
-				top: 0;
-				bottom: 0;
-				right: 0;
-				z-index: 999;
-			}
+            #cy {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                z-index: 999;
+            }
 
-			h1 {
-				opacity: 0.5;
-				font-size: 1em;
-				font-weight: bold;
-			}
-		</style>
+            h1 {
+                opacity: 0.5;
+                font-size: 1em;
+                font-weight: bold;
+            }
+        </style>
 
-		<script>
-			document.addEventListener('DOMContentLoaded', function(){
+        <script>
+            document.addEventListener('DOMContentLoaded', function(){
 
-				var cy = window.cy = cytoscape({
-					container: document.getElementById('cy'),
+                var cy = window.cy = cytoscape({
+                    container: document.getElementById('cy'),
 
-					style: [
-						{
-							selector: 'node',
-							style: {
-								'content': 'data(name)'
-							}
-						},
+                    style: [
+                        {
+                            selector: 'node',
+                            style: {
+                                'content': 'data(name)'
+                            }
+                        },
 
-						{
-							selector: 'edge',
-							style: {
-								'target-arrow-shape': 'triangle'
-							}
-						},
+                        {
+                            selector: 'edge',
+                            style: {
+                                'curve-style': 'haystack',
+                                'haystack-radius': 0,
+                                'width': 2,
+                                'opacity': 0.666
+                            }
+                        },
 
-						{
-							selector: ':selected',
-							style: {
+                        {
+                            selector: ':selected',
+                            style: {
 
-							}
-						}
-					],
+                            }
+                        }
+                    ],
 
-					elements: {
-						nodes: [
-							{ data: { id: 'j', name: 'Jerry' } },
-							{ data: { id: 'e', name: 'Elaine' } },
-							{ data: { id: 'k', name: 'Kramer' } },
-							{ data: { id: 'g', name: 'George' } }
-						],
-						edges: [
-							{ data: { source: 'j', target: 'e' } },
-							{ data: { source: 'j', target: 'k' } },
-							{ data: { source: 'j', target: 'g' } },
-							{ data: { source: 'e', target: 'j' } },
-							{ data: { source: 'e', target: 'k' } },
-							{ data: { source: 'k', target: 'j' } },
-							{ data: { source: 'k', target: 'e' } },
-							{ data: { source: 'k', target: 'g' } },
-							{ data: { source: 'g', target: 'j' } }
-						]
-					},
-				});
+                    elements: {
+                        nodes: [
+                            { data: { id: '1' } },
+                            { data: { id: '2' } },
+                            { data: { id: '3' } },
+                            { data: { id: '4' } }
+                        ],
+                        edges: [
+                            { data: { source: '1', target: '2' } },
+                            { data: { source: '1', target: '3' } },
+                            { data: { source: '1', target: '4' } },
+                            { data: { source: '2', target: '1' } },
+                            { data: { source: '2', target: '4' } },
+                            { data: { source: '3', target: '1' } },
+                            { data: { source: '4', target: '1' } },
+                            { data: { source: '4', target: '2' } }
+                        ]
+                    },
+
+                    layout: {
+                        name: 'random',
+                        fit: true,
+                        padding: 30
+                    }
+                });
 
                 // Input parameters to Markov cluster algorithm
                 var options = {
@@ -92,22 +100,22 @@
                 };
 
                 // Run Markov cluster on graph
-				cy.elements().markovCluster( options );
+                cy.elements().markovCluster( options );
 
                 // Assign random colors to each cluster!
                 for (var c = 0; c < options.k; c++) {
                     clusters[c].style( 'background-color', '#' + Math.floor(Math.random()*16777215).toString(16) );
                 }
 
-			});
-		</script>
-	</head>
+            });
+        </script>
+    </head>
 
-	<body>
-		<h1>cytoscape-markov-cluster demo</h1>
+    <body>
+        <h1>cytoscape-markov-cluster demo</h1>
 
-		<div id="cy"></div>
+        <div id="cy"></div>
 
-	</body>
+    </body>
 
 </html>
