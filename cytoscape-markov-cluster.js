@@ -55,6 +55,18 @@
     }
   };
 
+  var mmult = function( A, B, n ) {
+
+  };
+
+  var expand = function( M, n, expandFactor /** power **/ ) {
+
+  };
+
+  var inflate = function( M, n, inflateFactor /** r **/ ) {
+
+  };
+
   var hasConverged = function( M, iterations ) {
 
   };
@@ -96,8 +108,8 @@
 
     // Step 2: M = normalize( M );
     normalize( M, n );
-    printMatrix( M );
-    debugger;
+    //printMatrix( M );
+    //debugger;
 
     var isStillMoving = true;
     var iterations = 0;
@@ -106,9 +118,9 @@
 
       isStillMoving = false;
 
-      // Step 3: M = inflate( M, inflateFactor );
+      // Step 3: M = expand ( M, expandFactor );
 
-      // Step 4: M = expand ( M, expandFactor );
+      // Step 4: M = inflate( M, inflateFactor );
 
       isStillMoving = hasConverged( M, iterations );
 
