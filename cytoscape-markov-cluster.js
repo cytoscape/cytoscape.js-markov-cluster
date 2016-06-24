@@ -55,7 +55,7 @@
     }
   };
 
-  // TODO: naive matrix multiplication
+  // TODO: blocking matrix multiplication?
   var mmult = function( A, B, C, n ) {
     var i, j, k;
     for (i=0; i<n; i++) {
@@ -80,6 +80,14 @@
 
   var inflate = function( M, n, inflateFactor /** r **/ ) {
 
+    // M(i,j) ^ inflatePower
+    for (var i=0; i<n*n; i++) {
+      M[i] = Math.pow(M[i],inflateFactor);
+    }
+
+    normalize( M, n );
+
+    return M;
   };
 
   var hasConverged = function( M, iterations ) {
@@ -123,8 +131,6 @@
 
     // Step 2: M = normalize( M );
     normalize( M, n );
-    //printMatrix( M );
-    //debugger;
 
     var isStillMoving = true;
     var iterations = 0;
@@ -133,14 +139,14 @@
 
       isStillMoving = false;
 
-      // Step 3: M = expand ( M, expandFactor );
-      debugger;
+      // Step 3:
       M = expand( M, n, opts.expandFactor );
+
+      // Step 4:
+      M = inflate( M, n, opts.inflateFactor );
 
       printMatrix( M );
       debugger;
-
-      // Step 4: M = inflate( M, inflateFactor );
 
       isStillMoving = hasConverged( M, iterations );
 
