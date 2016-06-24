@@ -55,12 +55,27 @@
     }
   };
 
-  var mmult = function( A, B, n ) {
+  // TODO: naive matrix multiplication
+  var mmult = function( A, B, C, n ) {
+    var i, j, k;
+    for (i=0; i<n; i++) {
+      for (j=0; j<n; j++)
+        C[i*n+j] = 0;
 
+      for (k=0; k<n; k++) {
+        for (j=0; j<n; j++) {
+          C[i*n+j] += A[i*n+k]*B[k*n+j];
+        }
+      }
+    }
   };
 
   var expand = function( M, n, expandFactor /** power **/ ) {
-
+    var M_p = new Array( n * n );
+    for (var p = 1; p < expandFactor; p++) {
+      mmult( M, M, M_p, n );
+    }
+    return M_p;
   };
 
   var inflate = function( M, n, inflateFactor /** r **/ ) {
@@ -119,6 +134,11 @@
       isStillMoving = false;
 
       // Step 3: M = expand ( M, expandFactor );
+      debugger;
+      M = expand( M, n, opts.expandFactor );
+
+      printMatrix( M );
+      debugger;
 
       // Step 4: M = inflate( M, inflateFactor );
 
