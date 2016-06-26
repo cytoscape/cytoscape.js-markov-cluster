@@ -1,5 +1,8 @@
 ;(function(){ 'use strict';
 
+  // Implemented from Stijn van Dongen's (author of MCL algorithm) documentation: http://micans.org/mcl/
+  // and lecture notes: https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pdf
+
   var defaults = {
     expandFactor: 2,      //
     inflateFactor: 2,     //
@@ -56,7 +59,7 @@
     }
   };
 
-  // TODO: blocking matrix multiplication?
+  // TODO: blocked matrix multiplication?
   var mmult = function( A, B, n ) {
     var C = new Array(n*n);
 
@@ -158,7 +161,6 @@
     }
 
     // Begin Markov cluster algorithm
-    var clusters = [];
 
     // Step 1: Add self loops to each node, ie. add multFactor to matrix diagonal
     addLoops( M, n, opts.multFactor );
@@ -178,7 +180,7 @@
 
       // Step 4:
       M = inflate( _M, n, opts.inflateFactor );
-      
+
       // Step 5: check to see if ~steady state has been reached
       if ( ! hasConverged( M, _M, n2, 4 ) ) {
         isStillMoving = true;
@@ -188,7 +190,7 @@
     }
 
     // Build clusters from matrix
-    clusters = assign( M, n, nodes );
+    var clusters = assign( M, n, nodes );
 
     return clusters;
   };
