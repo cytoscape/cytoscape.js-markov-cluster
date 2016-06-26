@@ -22,7 +22,7 @@
     for ( var i = 0; i < n; i++ ) {
       var row = '';
       for ( var j = 0; j < n; j++ ) {
-        row += Math.round(M[i*n+j]*1000)/1000 + ' ';
+        row += Number(M[i*n+j]).toFixed(3) + ' ';
       }
       console.log(row);
     }
@@ -59,10 +59,12 @@
   // TODO: blocking matrix multiplication?
   var mmult = function( A, B, n ) {
     var C = new Array(n*n);
+
     var i, j, k;
     for (i=0; i<n; i++) {
-      for (j=0; j<n; j++)
-        C[i*n+j] = 0;
+      for (j=0; j<n; j++) {
+        C[i * n + j] = 0;
+      }
 
       for (k=0; k<n; k++) {
         for (j=0; j<n; j++) {
@@ -74,7 +76,7 @@
   };
 
   var expand = function( M, n, expandFactor /** power **/ ) {
-    var _M = M.slice();
+    var _M = M.slice(0);
 
     for (var p = 1; p < expandFactor; p++) {
       M = mmult( M, _M, n );
@@ -87,7 +89,7 @@
 
     // M(i,j) ^ inflatePower
     for (var i=0; i<n*n; i++) {
-      _M[i] = M[i]*M[i];//Math.pow(M[i],inflateFactor);
+      _M[i] = Math.pow(M[i],inflateFactor);
     }
 
     normalize( _M, n );
@@ -95,9 +97,35 @@
     return _M;
   };
 
-  var hasConverged = function( M, iterations ) {
+  var hasConverged = function( M, _M, n2, roundFactor ) {
+    for (var i = 0; i < n2; i++) {
+      var v1 = M[i];
+      var v2 = _M[i];
+      v1 = Math.round( v1 * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor); // truncate to 'roundFactor' decimal places
+      v2 = Math.round( v2 * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor);
 
-    return false;
+      if (v1 !== v2) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  var assign = function( M, n, nodes ) {
+    var clusters = [];
+
+    for (var i = 0; i < n; i++) {
+      var cluster = [];
+      for (var j = 0; j < n; j++) {
+        if (Math.round(M[i*n+j]*1000)/1000 !== 0) {
+          cluster.push( nodes[j] );
+        }
+      }
+      if (cluster.length !== 0) {
+        clusters.push(cy.collection(cluster));
+      }
+    }
+    return clusters;
   };
 
   var markovCluster = function( options ) {
@@ -117,7 +145,7 @@
 
     // Generate stochastic matrix M from input graph G (should be symmetric/undirected)
     var n = nodes.length, n2 = n * n;
-    var M = new Array( n2 );
+    var M = new Array( n2 ), _M;
     for (var i = 0; i < n2; i++) {
       M[i] = 0;
     }
@@ -146,21 +174,21 @@
       isStillMoving = false;
 
       // Step 3:
-      M = expand( M, n, opts.expandFactor );
+      _M = expand( M, n, opts.expandFactor );
 
       // Step 4:
-      M = inflate( M, n, opts.inflateFactor );
-
-      //printMatrix( M );
-      //debugger;
-
+      M = inflate( _M, n, opts.inflateFactor );
+      
       // Step 5: check to see if ~steady state has been reached
-      if ( ! hasConverged( M, iterations ) ) {
+      if ( ! hasConverged( M, _M, n2, 4 ) ) {
         isStillMoving = true;
       }
 
       iterations++;
     }
+
+    // Build clusters from matrix
+    clusters = assign( M, n, nodes );
 
     return clusters;
   };
