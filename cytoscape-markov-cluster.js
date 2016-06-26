@@ -4,11 +4,11 @@
   // and lecture notes: https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pdf
 
   var defaults = {
-    expandFactor: 2,      //
-    inflateFactor: 2,     //
-    multFactor: 1,        // self loops for each node
-    maxIterations: 10,    //
-    attributes: [
+    expandFactor: 2,      // affects time of computation and cluster granularity to some extent: M * M
+    inflateFactor: 2,     // affects cluster granularity (the greater the value, the more clusters): M(i,j) / E(j)
+    multFactor: 1,        // optional self loops for each node. Use a neutral value to improve cluster computations.
+    maxIterations: 10,    // maximum number of iterations of the MCL algorithm in a single run
+    attributes: [         // attributes/features used to group nodes, ie. similarity values between nodes
       function(edge) {
         return 1;
       }
