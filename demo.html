@@ -46,7 +46,7 @@
                         {
                             selector: 'node',
                             style: {
-                                'content': 'data(name)'
+                                'content': 'data(id)'
                             }
                         },
 
@@ -70,20 +70,21 @@
 
                     elements: {
                         nodes: [
-                            { data: { id: '1' } },
-                            { data: { id: '2' } },
-                            { data: { id: '3' } },
-                            { data: { id: '4' } }
+                            { data: { id: 'cat' } },
+                            { data: { id: 'hat' } },
+                            { data: { id: 'bat' } },
+                            { data: { id: 'bit' } },
+                            { data: { id: 'fit' } },
+                            { data: { id: 'hit' } }
                         ],
                         edges: [
-                            { data: { source: '1', target: '2' } },
-                            { data: { source: '1', target: '3' } },
-                            { data: { source: '1', target: '4' } },
-                            { data: { source: '2', target: '1' } },
-                            { data: { source: '2', target: '4' } },
-                            { data: { source: '3', target: '1' } },
-                            { data: { source: '4', target: '1' } },
-                            { data: { source: '4', target: '2' } }
+                            { data: { source: 'cat', target: 'hat', weight: 0.2 } },
+                            { data: { source: 'hat', target: 'bat', weight: 0.16 } },
+                            { data: { source: 'bat', target: 'cat', weight: 1.0 } },
+                            { data: { source: 'bat', target: 'bit', weight: 0.125 } },
+                            { data: { source: 'bit', target: 'fit', weight: 0.25 } },
+                            { data: { source: 'fit', target: 'hit', weight: 0.5 } },
+                            { data: { source: 'hit', target: 'bit', weight: 0.16 } }
                         ]
                     },
 
@@ -96,7 +97,12 @@
 
                 // Input parameters to Markov cluster algorithm
                 var options = {
-
+                    inflateFactor: 1.5,
+                    attributes: [
+                        function(edge) {
+                            return edge.data('weight');
+                        }
+                    ]
                 };
 
                 // Run Markov cluster on graph

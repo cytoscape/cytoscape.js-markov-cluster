@@ -157,7 +157,11 @@
       var edge = edges[e];
       var i = id2position[ edge.source().id() ];
       var j = id2position[ edge.target().id() ];
-      M[i * n + j] += getSimilarity( edge, opts.attributes ); // G should be symmetric and undirected
+
+      var sim = getSimilarity( edge, opts.attributes );
+
+      M[i * n + j] += sim; // G should be symmetric and undirected
+      M[j * n + i] += sim;
     }
 
     // Begin Markov cluster algorithm
