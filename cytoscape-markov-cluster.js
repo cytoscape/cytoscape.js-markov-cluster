@@ -9,9 +9,9 @@
     multFactor: 1,        // self loops for each node
     maxIterations: 10,    //
     attributes: [
-        function(edge) {
-          return 1;
-        }
+      function(edge) {
+        return 1;
+      }
     ]
   };
 
@@ -48,12 +48,12 @@
 
   var normalize = function( M, n ) {
     var sum;
-    for (var col = 0; col < n; col++) {
+    for ( var col = 0; col < n; col++ ) {
       sum = 0;
-      for (var row = 0; row < n; row++) {
+      for ( var row = 0; row < n; row++ ) {
         sum += M[row * n + col];
       }
-      for (var row = 0; row < n; row++) {
+      for ( var row = 0; row < n; row++ ) {
         M[row * n + col] = M[row * n + col] / sum;
       }
     }
@@ -61,17 +61,16 @@
 
   // TODO: blocked matrix multiplication?
   var mmult = function( A, B, n ) {
-    var C = new Array(n*n);
+    var C = new Array( n * n );
 
-    var i, j, k;
-    for (i=0; i<n; i++) {
-      for (j=0; j<n; j++) {
+    for ( var i = 0; i < n; i++ ) {
+      for ( var j = 0; j < n; j++ ) {
         C[i * n + j] = 0;
       }
 
-      for (k=0; k<n; k++) {
-        for (j=0; j<n; j++) {
-          C[i*n+j] += A[i*n+k]*B[k*n+j];
+      for ( var k = 0; k < n; k++ ) {
+        for ( var j = 0; j < n; j++ ) {
+          C[i * n + j] += A[i * n + k] * B[k * n + j];
         }
       }
     }
@@ -81,7 +80,7 @@
   var expand = function( M, n, expandFactor /** power **/ ) {
     var _M = M.slice(0);
 
-    for (var p = 1; p < expandFactor; p++) {
+    for ( var p = 1; p < expandFactor; p++ ) {
       M = mmult( M, _M, n );
     }
     return M;
@@ -91,8 +90,8 @@
     var _M = new Array( n * n );
 
     // M(i,j) ^ inflatePower
-    for (var i=0; i<n*n; i++) {
-      _M[i] = Math.pow(M[i],inflateFactor);
+    for ( var i = 0; i < n * n; i++ ) {
+      _M[i] = Math.pow( M[i], inflateFactor );
     }
 
     normalize( _M, n );
@@ -101,31 +100,31 @@
   };
 
   var hasConverged = function( M, _M, n2, roundFactor ) {
-    for (var i = 0; i < n2; i++) {
-      var v1 = M[i];
-      var v2 = _M[i];
-      v1 = Math.round( v1 * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor); // truncate to 'roundFactor' decimal places
-      v2 = Math.round( v2 * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor);
+    // Check that both matrices have the same elements (i,j)
+    for ( var i = 0; i < n2; i++ ) {
+      var v1 = Math.round( M[i] * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor); // truncate to 'roundFactor' decimal places
+      var v2 = Math.round( _M[i] * Math.pow(10, roundFactor) ) / Math.pow(10, roundFactor);
 
-      if (v1 !== v2) {
+      if ( v1 !== v2 ) {
         return false;
       }
     }
     return true;
   };
 
-  var assign = function( M, n, nodes ) {
+  var assign = function( M, n, nodes, cy ) {
     var clusters = [];
 
-    for (var i = 0; i < n; i++) {
+    for ( var i = 0; i < n; i++ ) {
       var cluster = [];
-      for (var j = 0; j < n; j++) {
-        if (Math.round(M[i*n+j]*1000)/1000 !== 0) {
+      for ( var j = 0; j < n; j++ ) {
+        // Row-wise attractors and elements that they attract belong in same cluster
+        if ( Math.round( M[i * n + j] * 1000 ) / 1000 > 0 ) {
           cluster.push( nodes[j] );
         }
       }
-      if (cluster.length !== 0) {
-        clusters.push(cy.collection(cluster));
+      if ( cluster.length !== 0 ) {
+        clusters.push( cy.collection(cluster) );
       }
     }
     return clusters;
@@ -149,7 +148,7 @@
     // Generate stochastic matrix M from input graph G (should be symmetric/undirected)
     var n = nodes.length, n2 = n * n;
     var M = new Array( n2 ), _M;
-    for (var i = 0; i < n2; i++) {
+    for ( var i = 0; i < n2; i++ ) {
       M[i] = 0;
     }
 
@@ -174,7 +173,6 @@
 
     var isStillMoving = true;
     var iterations = 0;
-
     while ( isStillMoving && iterations < opts.maxIterations ) {
 
       isStillMoving = false;
@@ -194,7 +192,7 @@
     }
 
     // Build clusters from matrix
-    var clusters = assign( M, n, nodes );
+    var clusters = assign( M, n, nodes, cy );
 
     return clusters;
   };

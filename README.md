@@ -1,16 +1,16 @@
 cytoscape-markov-cluster
 ================================================================================
 
+![Screenshot of clusters returned from Markov Cluster algorithm](./demo-img.png?raw=true "Screenshot of clusters returned from Markov Cluster algorithm")
 
-## Description
+A Markov Cluster (MCL) algorithm for Cytoscape.js.
 
-A Cytoscape.js extension for the Markov cluster algorithm
+*Zoe Xi, for Google Summer of Code.*
 
 
 ## Dependencies
 
- * Cytoscape.js ^x.y.z
- * <List your dependencies here please>
+ * Cytoscape.js >= 2.6.12
 
 
 ## Usage instructions
@@ -18,22 +18,22 @@ A Cytoscape.js extension for the Markov cluster algorithm
 Download the library:
  * via npm: `npm install cytoscape-markov-cluster`,
  * via bower: `bower install cytoscape-markov-cluster`, or
- * via direct download in the repository (probably from a tag).
+ * via direct download in the repository.
 
 `require()` the library as appropriate for your project:
 
 CommonJS:
 ```js
 var cytoscape = require('cytoscape');
-var markov-cluster = require('cytoscape-markov-cluster');
+var markovCluster = require('cytoscape-markov-cluster');
 
-markov-cluster( cytoscape ); // register extension
+markovCluster( cytoscape ); // register extension
 ```
 
 AMD:
 ```js
-require(['cytoscape', 'cytoscape-markov-cluster'], function( cytoscape, markov-cluster ){
-  markov-cluster( cytoscape ); // register extension
+require(['cytoscape', 'cytoscape-markov-cluster'], function( cytoscape, markovCluster ){
+  markovCluster( cytoscape ); // register extension
 });
 ```
 
@@ -42,24 +42,20 @@ Plain HTML/JS has the extension registered for you automatically, because no `re
 
 ## API
 
-Please briefly describe your API here:
-
 ```js
-cy.markov-cluster({
-  foo: 'bar', // some option that does this
-  baz: 'bat' // some options that does that
-  // ... and so on
+var clusters = cy.elements().markovCluster({
+    expandFactor: 2,        // affects time of computation and cluster granularity to some extent: M * M
+    inflateFactor: 2,       // affects cluster granularity (the greater the value, the more clusters): M(i,j) / E(j)
+    multFactor: 1,          // optional self loops for each node. Use a neutral value to improve cluster computations.
+    maxIterations: 10,      // maximum number of iterations of
+    attributes: [           // attributes/features used to group nodes, ie. similarity values between nodes
+        function(edge) {
+            return edge.data('weight');
+        }
+        // ... and so on
+     ]
 });
-```
 
-Or maybe if you have a collection extension:
-
-```js
-cy.elements().test({
-  foo: 'bar', // some option that does this
-  baz: 'bat' // some options that does that
-  // ... and so on
-});
 ```
 
 
