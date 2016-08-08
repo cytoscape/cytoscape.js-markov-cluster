@@ -7,7 +7,7 @@
     expandFactor: 2,      // affects time of computation and cluster granularity to some extent: M * M
     inflateFactor: 2,     // affects cluster granularity (the greater the value, the more clusters): M(i,j) / E(j)
     multFactor: 1,        // optional self loops for each node. Use a neutral value to improve cluster computations.
-    maxIterations: 10,    // maximum number of iterations of the MCL algorithm in a single run
+    maxIterations: 20,    // maximum number of iterations of the MCL algorithm in a single run
     attributes: [         // attributes/features used to group nodes, ie. similarity values between nodes
       function(edge) {
         return 1;
@@ -130,6 +130,27 @@
     return clusters;
   };
 
+  var isDuplicate = function( c1, c2 ) {
+    for (var i = 0; i < c1.length; i++) {
+      if (!c2[i] || c1[i].id() !== c2[i].id()) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  var removeDuplicates = function( clusters ) {
+
+    for (var i = 0; i < clusters.length; i++) {
+      for (var j = 0; j < clusters.length; j++) {
+        if (i != j && isDuplicate(clusters[i], clusters[j])) {
+          clusters.splice(j, 1);
+        }
+      }
+    }
+    return clusters;
+  };
+
   var markovCluster = function( options ) {
     var nodes = this.nodes();
     var edges = this.edges();
@@ -193,6 +214,9 @@
 
     // Build clusters from matrix
     var clusters = assign( M, n, nodes, cy );
+
+    // Remove duplicate clusters due to symmetry of graph and M matrix
+    clusters = removeDuplicates( clusters );
 
     return clusters;
   };
